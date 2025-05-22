@@ -1,22 +1,21 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: bootstrap-system-apps
+  name: gatekeeper
   namespace: argocd
 spec:
+  project: default
+  source:
+    repoURL: https://open-policy-agent.github.io/gatekeeper/charts
+    chart: gatekeeper
+    targetRevision: "3.13.0"
+    helm:
+      values: |
+        # Add Helm values here
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd
-  project: default
-  source:
-    repoURL: https://github.com/vietcgi/infra
-    targetRevision: HEAD
-    path: apps/system
-    directory:
-      recurse: true
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
-    syncOptions:
-      - CreateNamespace=true

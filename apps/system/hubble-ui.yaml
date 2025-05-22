@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: hubble-ui
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://helm.cilium.io
+    chart: hubble-ui
+    targetRevision: "0.11.0"
+    helm:
+      values: |
+        # Add Helm values here
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

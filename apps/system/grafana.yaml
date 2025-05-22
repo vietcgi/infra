@@ -1,0 +1,45 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: grafana
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://grafana.github.io/helm-charts
+    chart: grafana
+    targetRevision: "1"
+    helm:
+      values: |
+        adminPassword: changeme
+        grafana:
+          auth:
+            disable_login_form: true
+            disable_signout_menu: false
+            generic_oauth:
+              enabled: true
+              name: Okta
+              allow_sign_up: true
+              client_id: ${GF_AUTH_GENERIC_OAUTH_CLIENT_ID}
+              client_secret: ${GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET}
+              scopes: openid profile email groups
+              role_attribute_path: contains(groups[*], 'grafana-admin') && 'Admin' || 'Viewer'
+        persistence:
+          enabled: true
+          size: 10Gi
+        datasources:
+          datasources.yaml:
+            apiVersion: 1
+            datasources:
+              - name: Loki
+                type: loki
+                access: proxy
+                isDefault: true
+                url: http://loki.monitoring.svc.cluster.local:3100
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: grafana
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

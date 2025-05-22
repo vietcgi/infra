@@ -5,25 +5,23 @@ metadata:
   namespace: argocd
 spec:
   generators:
-  - git:
-      directories:
-      - path: system/*
-      - path: projects/*
-      - path: system/argocd-notifications
-      repoURL: https://github.com/your-org/apps
-      revision: HEAD
+    - git:
+        repoURL: https://github.com/vietcgi/infra
+        revision: HEAD
+        directories:
+          - path: apps/system
   template:
     metadata:
       name: '{{path.basename}}'
     spec:
-      destination:
-        namespace: '{{path.basename}}'
-        server: https://kubernetes.default.svc
       project: default
       source:
-        path: '{{path}}'
-        repoURL: https://github.com/your-org/apps
+        repoURL: https://github.com/vietcgi/infra
         targetRevision: HEAD
+        path: '{{path}}'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{path.basename}}'
       syncPolicy:
         automated:
           prune: true

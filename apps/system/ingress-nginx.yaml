@@ -1,21 +1,20 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: longhorn
+  name: ingress-nginx
   namespace: argocd
 spec:
   project: default
   source:
-    repoURL: https://charts.longhorn.io
-    chart: longhorn
-    targetRevision: 1.5.1
+    repoURL: https://kubernetes.github.io/ingress-nginx
+    chart: ingress-nginx
+    targetRevision: "4.7.1"
     helm:
       values: |
-defaultSettings:
-  defaultReplicaCount: 2
+        # Add Helm values here
   destination:
     server: https://kubernetes.default.svc
-    namespace: longhorn-system
+    namespace: argocd
   syncPolicy:
     automated:
       prune: true

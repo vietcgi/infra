@@ -1,20 +1,20 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: sealed-secrets
+  name: loki
   namespace: argocd
 spec:
   project: default
   source:
-    repoURL: https://charts.bitnami.com/bitnami
-    chart: sealed-secrets
-    targetRevision: 2.12.1
+    repoURL: https://grafana.github.io/helm-charts
+    chart: loki
+    targetRevision: "5.43.1"
     helm:
       values: |
-fullnameOverride: sealed-secrets-controller
+        # Add Helm values here
   destination:
     server: https://kubernetes.default.svc
-    namespace: kube-system
+    namespace: argocd
   syncPolicy:
     automated:
       prune: true
