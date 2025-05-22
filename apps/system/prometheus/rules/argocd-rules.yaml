@@ -1,0 +1,28 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    prometheus: k8s
+    role: alert-rules
+  name: argocd-alerts
+  namespace: monitoring
+spec:
+  groups:
+  - name: argocd.rules
+    rules:
+    - alert: ArgoCDOutOfSync
+      annotations:
+        description: ArgoCD applications are not synced to the desired Git state.
+        summary: Some ArgoCD apps are OutOfSync.
+      expr: argocd_app_info{sync_status!="Synced"} > 0
+      for: 5m
+      labels:
+        severity: warning
+    - alert: ArgoCDAppDegraded
+      annotations:
+        description: ArgoCD application health is in a degraded state.
+        summary: Some ArgoCD apps are degraded.
+      expr: argocd_app_health_status{health_status!="Healthy"} > 0
+      for: 5m
+      labels:
+        severity: critical

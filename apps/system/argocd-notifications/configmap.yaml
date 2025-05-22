@@ -1,0 +1,20 @@
+apiVersion: v1
+data:
+  context: "\nemail:\n  from: argocd@example.com\n  smtpHost: smtp.postmarkapp.com\n\
+    \  smtpPort: 587\n  username: argocd@example.com\n  password: $postmark-token\n"
+  subscriptions: "\n  - recipients:\n      - email:you@example.com\n    triggers:\n\
+    \      - on-sync-failed\n      - on-health-degraded\n"
+  templates: "\n  - name: sync-failed\n    title: \"\u274C ArgoCD Sync Failed: {{app.metadata.name}}\"\
+    \n    body: |\n      Application {{app.metadata.name}} failed to sync.\n     \
+    \ Status: {{app.status.sync.status}}\n      Message: {{app.status.operationState.message}}\n\
+    \n  - name: health-degraded\n    title: \"\u26A0\uFE0F ArgoCD Health Degraded:\
+    \ {{app.metadata.name}}\"\n    body: |\n      Application {{app.metadata.name}}\
+    \ is degraded.\n      Health status: {{app.status.health.status}}\n      Message:\
+    \ {{app.status.health.message}}\n"
+  triggers: "\n  - name: on-sync-failed\n    condition: app.status.operationState.phase\
+    \ in ['Failed']\n    template: sync-failed\n  - name: on-health-degraded\n   \
+    \ condition: app.status.health.status == 'Degraded'\n    template: health-degraded\n"
+kind: ConfigMap
+metadata:
+  name: argocd-notifications-cm
+  namespace: argocd

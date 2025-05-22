@@ -1,0 +1,11 @@
+kubernetes_version: "v1.29.0"
+cni: "cilium"
+token: "dc11b-token-123"
+
+masters:
+  - name: dc11b-master1
+    mode: multipass
+
+workers:
+  - name: dc11b-worker1
+    mode: multipass
